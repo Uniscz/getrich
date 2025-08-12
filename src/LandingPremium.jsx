@@ -389,25 +389,29 @@ function AnimatedTransition({ imageSrc, videoSrc }) {
 
 /* EXEMPLOS — grid 3×3, áudio só após gesto e pausa os outros */
 function Examples({ videos }) {
-  const gridRef = useRef(null);
-  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState(null);
+  const videoRefs = useRef([]);
 
-  useEffect(() => {
-    const enable = () => setAudioEnabled(true);
-    window.addEventListener("pointerdown", enable, { once: true });
-    window.addEventListener("keydown", enable, { once: true });
-    return () => {
-      window.removeEventListener("pointerdown", enable);
-      window.removeEventListener("keydown", enable);
-    };
-  }, []);
+  const handleVideoClick = (index) => {
+    const video = videoRefs.current[index];
+    if (!video) return;
 
-  const pauseOthers = (target) => {
-    if (!gridRef.current) return;
-    const videos = gridRef.current.querySelectorAll("video");
-    videos.forEach((v) => {
-      if (v !== target) v.pause();
-    });
+    // Se o vídeo clicado já está tocando, pause
+    if (playingVideo === index) {
+      video.pause();
+      setPlayingVideo(null);
+    } else {
+      // Pause todos os outros vídeos
+      videoRefs.current.forEach((v, i) => {
+        if (v && i !== index) {
+          v.pause();
+        }
+      });
+      
+      // Toque o vídeo clicado
+      video.play();
+      setPlayingVideo(index);
+    }
   };
 
   return (
@@ -415,192 +419,46 @@ function Examples({ videos }) {
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-            Vídeos criados com IA em minutos
+            Cenas criadas em minutos com IA
           </h2>
           <p className="text-lg text-black/70 max-w-2xl mx-auto">
-            Cada vídeo foi criado seguindo o pipeline completo que você vai aprender no curso
+            Veja o poder da inteligência artificial na criação de vídeos. Deixe a complexidade de lado e foque na sua criatividade.
           </p>
         </div>
 
-        <div
-          ref={gridRef}
-          className="grid grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto"
-        >
+        <div className="grid md:grid-cols-3 gap-6">
           {videos.map((video, i) => (
             <div
               key={i}
               className="group relative aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <video
+                ref={(el) => (videoRefs.current[i] = el)}
                 src={video.src}
-                loop
-                muted={!audioEnabled}
                 playsInline
-                className="w-full h-full object-cover"
-                onPlay={(e) => pauseOthers(e.target)}
-                onMouseEnter={(e) => e.target.play()}
-                onMouseLeave={(e) => e.target.pause()}
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => handleVideoClick(i)}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-2 left-2 right-2">
-                <p className="text-white text-xs font-medium leading-tight">{video.label}</p>
-              </div>
-              <div className="absolute top-2 right-2">
-                <div className="bg-black/50 backdrop-blur rounded-full px-2 py-1">
-                  <span className="text-white text-xs">IA</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <a
-            href="#/checkout"
-            className="inline-flex items-center rounded-full bg-[#0A68FF] text-white px-8 py-4 text-lg font-semibold hover:brightness-110 transition-all duration-200 hover:scale-105"
-          >
-            Quero criar vídeos assim
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* LINHA DO TEMPO DO CURSO */
-function Timeline() {
-  const modules = [
-    {
-      icon: "🎯",
-      title: "Módulo 1: Fundamentos",
-      description: "Pipeline completo e ferramentas essenciais",
-      duration: "2h"
-    },
-    {
-      icon: "🎭",
-      title: "Módulo 2: Deepfake & Avatar",
-      description: "Criação de personagens ultra-realistas",
-      duration: "3h"
-    },
-    {
-      icon: "🎤",
-      title: "Módulo 3: Voz & Lip-sync",
-      description: "Sincronização perfeita de áudio e vídeo",
-      duration: "2.5h"
-    },
-    {
-      icon: "🎬",
-      title: "Módulo 4: Edição Avançada",
-      description: "Finalização cinematográfica profissional",
-      duration: "3.5h"
-    },
-    {
-      icon: "🚀",
-      title: "Bônus: Viralização",
-      description: "Estratégias de distribuição e conversão",
-      duration: "1.5h"
-    }
-  ];
-
-  return (
-    <section className="bg-gray-50 py-16">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-            Jornada completa de aprendizado
-          </h2>
-          <p className="text-lg text-black/70 max-w-2xl mx-auto">
-            Mais de 12 horas de conteúdo prático dividido em módulos progressivos
-          </p>
-        </div>
-
-        <div className="max-w-4xl mx-auto">
-          {modules.map((module, i) => (
-            <div key={i} className="flex items-start gap-6 mb-8 last:mb-0">
-              <div className="flex-shrink-0">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-black/10">
-                  {module.icon}
-                </div>
-                {i < modules.length - 1 && (
-                  <div className="w-px h-12 bg-black/10 mx-auto mt-4"></div>
-                )}
-              </div>
-              <div className="flex-1 bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-lg">{module.title}</h3>
-                  <span className="text-sm text-black/60 bg-gray-100 px-3 py-1 rounded-full">
-                    {module.duration}
-                  </span>
-                </div>
-                <p className="text-black/70">{module.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* DEPOIMENTOS EM CARROSSEL */
-function Testimonials({ testimonials }) {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <section className="bg-white py-16">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-            O que nossos alunos dizem
-          </h2>
-        </div>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="relative overflow-hidden rounded-xl bg-gray-50 p-8 md:p-12">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${current * 100}%)` }}
-            >
-              {testimonials.map((testimonial, i) => (
-                <div key={i} className="w-full flex-shrink-0">
-                  <div className="text-center">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
-                    />
-                    <blockquote className="text-xl md:text-2xl font-medium mb-4 text-black/90">
-                      "{testimonial.text}"
-                    </blockquote>
-                    <div className="text-black/60">
-                      <div className="font-medium">{testimonial.name}</div>
-                      <div className="text-sm">{testimonial.role}</div>
-                    </div>
+              
+              {/* Botão de play personalizado */}
+              {playingVideo !== i && (
+                <div 
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                  onClick={() => handleVideoClick(i)}
+                >
+                  <div className="bg-white/90 rounded-full p-4 shadow-lg hover:bg-white transition-all duration-200">
+                    <svg className="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
                   </div>
                 </div>
-              ))}
+              )}
+              
+              <div className="absolute bottom-2 left-2 right-2">
+                <p className="text-white text-xs font-medium leading-tight drop-shadow-lg">{video.label}</p>
+              </div>
             </div>
-          </div>
-
-          {/* Indicadores */}
-          <div className="flex justify-center gap-2 mt-6">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`w-2 h-2 rounded-full transition ${
-                  i === current ? 'bg-[#0A68FF]' : 'bg-black/20'
-                }`}
-              />
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </section>
@@ -609,59 +467,227 @@ function Testimonials({ testimonials }) {
 
 /* BENEFÍCIOS */
 function Benefits() {
-  const benefits = [
-    {
-      icon: "⚡",
-      title: "Pipeline Completo",
-      description: "Do roteiro à cena final em um fluxo otimizado"
-    },
-    {
-      icon: "🎭",
-      title: "Deepfake Profissional",
-      description: "Técnicas avançadas de troca de rosto ultra-realista"
-    },
-    {
-      icon: "🎤",
-      title: "Lip-sync Perfeito",
-      description: "Sincronização de áudio e movimento labial"
-    },
-    {
-      icon: "🎨",
-      title: "Identidade Visual",
-      description: "Crie uma assinatura visual consistente e marcante"
-    },
-    {
-      icon: "📈",
-      title: "Estratégias de Viralização",
-      description: "Técnicas comprovadas para maximizar alcance"
-    },
-    {
-      icon: "💰",
-      title: "Monetização",
-      description: "Como transformar views em receita real"
-    }
-  ];
-
   return (
-    <section id="beneficios" className="bg-gray-50 py-16">
+    <section className="bg-gray-50 py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-            Tudo que você vai dominar
+            O que você vai aprender
           </h2>
           <p className="text-lg text-black/70 max-w-2xl mx-auto">
-            Habilidades práticas que vão transformar sua criação de conteúdo
+            Nosso curso é dividido em módulos práticos, focados em resultados rápidos e eficientes.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits.map((benefit, i) => (
-            <div key={i} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition">
-              <div className="text-3xl mb-4">{benefit.icon}</div>
-              <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
-              <p className="text-black/70">{benefit.description}</p>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold mb-2">Criação de Roteiros com IA</h3>
+            <p className="text-black/70 text-sm">
+              Aprenda a gerar roteiros envolventes e otimizados para viralização usando as melhores ferramentas de IA.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold mb-2">Deepfake e Lip-Sync</h3>
+            <p className="text-black/70 text-sm">
+              Domine a arte de criar vídeos com personagens realistas e sincronia labial perfeita, sem precisar de atores.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold mb-2">Edição Cinematográfica</h3>
+            <p className="text-black/70 text-sm">
+              Transforme seus vídeos em produções de alta qualidade com técnicas de edição que prendem a atenção do público.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold mb-2">Estratégias de Viralização</h3>
+            <p className="text-black/70 text-sm">
+              Descubra os segredos para fazer seus vídeos alcançarem milhões de visualizações e gerarem engajamento.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold mb-2">Monetização e Negócios</h3>
+            <p className="text-black/70 text-sm">
+              Aprenda a transformar suas habilidades em fonte de renda, criando vídeos para clientes ou para seus próprios projetos.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold mb-2">Atualizações Constantes</h3>
+            <p className="text-black/70 text-sm">
+              Tenha acesso vitalício a todas as atualizações do curso, acompanhando as novidades do mundo da IA para vídeos.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* LINHA DO TEMPO DO CURSO */
+function Timeline() {
+  return (
+    <section className="bg-white py-16">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+            Sua jornada no VideosCraft IA
+          </h2>
+          <p className="text-lg text-black/70 max-w-2xl mx-auto">
+            Um passo a passo completo para você dominar a criação de vídeos com inteligência artificial.
+          </p>
+        </div>
+
+        <div className="relative max-w-3xl mx-auto">
+          {/* Linha vertical */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-gray-200 h-full hidden md:block"></div>
+
+          <div className="space-y-12">
+            {/* Item 1 */}
+            <div className="flex flex-col md:flex-row items-center md:justify-between relative">
+              <div className="md:w-1/2 md:pr-8 text-right">
+                <div className="bg-[#0A68FF] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto md:mx-0 mb-2 md:mb-0">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3 className="font-semibold text-lg">Módulo 1: Fundamentos da IA para Vídeos</h3>
+                <p className="text-black/70 text-sm">Introdução às ferramentas e conceitos essenciais.</p>
+                <p className="text-black/50 text-xs mt-1">Duração: 2 horas</p>
+              </div>
+              <div className="hidden md:block md:w-1/2"></div>
             </div>
-          ))}
+
+            {/* Item 2 */}
+            <div className="flex flex-col md:flex-row items-center md:justify-between relative">
+              <div className="hidden md:block md:w-1/2"></div>
+              <div className="md:w-1/2 md:pl-8 text-left">
+                <div className="bg-[#0A68FF] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto md:mx-0 mb-2 md:mb-0">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3 className="font-semibold text-lg">Módulo 2: Roteiro e Storytelling com IA</h3>
+                <p className="text-black/70 text-sm">Crie narrativas envolventes e roteiros otimizados para viralização.</p>
+                <p className="text-black/50 text-xs mt-1">Duração: 3 horas</p>
+              </div>
+            </div>
+
+            {/* Item 3 */}
+            <div className="flex flex-col md:flex-row items-center md:justify-between relative">
+              <div className="md:w-1/2 md:pr-8 text-right">
+                <div className="bg-[#0A68FF] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto md:mx-0 mb-2 md:mb-0">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3 className="font-semibold text-lg">Módulo 3: Deepfake e Lip-Sync na Prática</h3>
+                <p className="text-black/70 text-sm">Aprenda a criar personagens realistas e sincronia labial perfeita.</p>
+                <p className="text-black/50 text-xs mt-1">Duração: 4 horas</p>
+              </div>
+              <div className="hidden md:block md:w-1/2"></div>
+            </div>
+
+            {/* Item 4 */}
+            <div className="flex flex-col md:flex-row items-center md:justify-between relative">
+              <div className="hidden md:block md:w-1/2"></div>
+              <div className="md:w-1/2 md:pl-8 text-left">
+                <div className="bg-[#0A68FF] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto md:mx-0 mb-2 md:mb-0">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3 className="font-semibold text-lg">Módulo 4: Edição e Pós-Produção com IA</h3>
+                <p className="text-black/70 text-sm">Técnicas avançadas para transformar seus vídeos em obras de arte.</p>
+                <p className="text-black/50 text-xs mt-1">Duração: 5 horas</p>
+              </div>
+            </div>
+
+            {/* Item 5 */}
+            <div className="flex flex-col md:flex-row items-center md:justify-between relative">
+              <div className="md:w-1/2 md:pr-8 text-right">
+                <div className="bg-[#0A68FF] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto md:mx-0 mb-2 md:mb-0">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3 className="font-semibold text-lg">Módulo 5: Estratégias de Viralização e Monetização</h3>
+                <p className="text-black/70 text-sm">Faça seus vídeos alcançarem milhões e aprenda a monetizar seu conteúdo.</p>
+                <p className="text-black/50 text-xs mt-1">Duração: 3 horas</p>
+              </div>
+              <div className="hidden md:block md:w-1/2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* CARROSSEL DE DEPOIMENTOS */
+function Testimonials({ testimonials }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Troca de depoimento a cada 5 segundos
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  useEffect(() => {
+    if (carouselRef.current) {
+      carouselRef.current.style.transform = `translateX(-${
+        currentIndex * 100
+      }%)`;
+    }
+  }, [currentIndex]);
+
+  return (
+    <section className="bg-gray-50 py-16">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+            O que nossos alunos dizem
+          </h2>
+          <p className="text-lg text-black/70 max-w-2xl mx-auto">
+            Histórias de sucesso de quem já está transformando sua paixão em resultados.
+          </p>
+        </div>
+
+        <div className="relative overflow-hidden rounded-xl shadow-sm border border-black/10 bg-white p-6 md:p-8">
+          <div
+            ref={carouselRef}
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ width: `${testimonials.length * 100}%` }}
+          >
+            {testimonials.map((testimonial, i) => (
+              <div key={i} className="w-full flex-shrink-0">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-24 h-24 rounded-full object-cover shadow-md"
+                  />
+                  <div className="text-center md:text-left">
+                    <p className="text-lg italic text-black/80 mb-4">
+                      &ldquo;{testimonial.text}&rdquo;
+                    </p>
+                    <p className="font-semibold text-black">
+                      {testimonial.name}
+                    </p>
+                    <p className="text-sm text-black/60">
+                      {testimonial.role}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Navegação (opcional, se precisar de botões) */}
+          {/* <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className={`w-3 h-3 rounded-full ${
+                  currentIndex === i ? "bg-[#0A68FF]" : "bg-gray-300"
+                }`}
+              />
+            ))}
+          </div> */}
         </div>
       </div>
     </section>
@@ -673,43 +699,19 @@ function Offer({ cta }) {
   return (
     <section className="bg-white py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 md:p-12 border border-blue-100">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-6">
-              Oferta de Pré-venda
-            </h2>
-            <div className="mb-8">
-              <div className="text-sm text-black/60 mb-2">De R$ 297 por apenas</div>
-              <div className="text-5xl md:text-6xl font-bold text-[#0A68FF] mb-2">
-                R$ 119,90
-              </div>
-              <div className="text-sm text-black/60">
-                Pagamento único • Sem mensalidades • Garantia de 7 dias
-              </div>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-6 mb-8 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                <span>Acesso vitalício</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                <span>Atualizações gratuitas</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                <span>Suporte direto</span>
-              </div>
-            </div>
-
-            <a
-              href={cta}
-              className="inline-flex items-center rounded-full bg-[#0A68FF] text-white px-8 py-4 text-xl font-semibold hover:brightness-110 transition-all duration-200 hover:scale-105"
-            >
-              🚀 Garantir Minha Vaga Agora
-            </a>
-          </div>
+        <div className="rounded-xl border border-black/10 p-6 md:p-8 bg-gradient-to-br from-white to-gray-50 shadow-sm text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+            Não perca essa oportunidade!
+          </h2>
+          <p className="text-lg text-black/70 max-w-2xl mx-auto mb-8">
+            Aprenda a criar vídeos incríveis com IA e transforme sua presença online. Vagas limitadas!
+          </p>
+          <a
+            href={cta}
+            className="inline-flex items-center justify-center rounded-full bg-[#0A68FF] text-white px-8 py-4 text-lg font-semibold hover:brightness-110 transition-all duration-200 hover:scale-105"
+          >
+            🚀 Quero Garantir Minha Vaga Agora
+          </a>
         </div>
       </div>
     </section>
@@ -718,55 +720,78 @@ function Offer({ cta }) {
 
 /* FAQ */
 function Faq() {
-  const [openIndex, setOpenIndex] = useState(null);
-
   const faqs = [
     {
-      q: "Preciso ter experiência prévia com edição de vídeo?",
-      a: "Não! O curso foi pensado para iniciantes. Começamos do básico e evoluímos gradualmente até técnicas avançadas."
+      question: "Preciso ter conhecimento prévio em edição de vídeo ou IA?",
+      answer: "Não! O curso é feito para iniciantes e avançados. Você aprenderá do zero ao avançado, sem complicação.",
     },
     {
-      q: "Quais ferramentas vou precisar?",
-      a: "Todas as ferramentas utilizadas são gratuitas ou têm versões gratuitas. Fornecemos uma lista completa no primeiro módulo."
+      question: "Quais ferramentas de IA serão utilizadas?",
+      answer: "Utilizaremos as ferramentas mais atuais e eficientes do mercado, muitas delas gratuitas ou com planos acessíveis. Você terá acesso a uma lista completa dentro do curso.",
     },
     {
-      q: "Quanto tempo leva para dominar as técnicas?",
-      a: "Com dedicação de 1-2 horas por dia, você pode dominar o pipeline completo em 2-3 semanas."
+      question: "O curso oferece suporte?",
+      answer: "Sim! Você terá acesso à nossa comunidade exclusiva de alunos, onde poderá tirar dúvidas e trocar experiências com outros criadores.",
     },
     {
-      q: "Há garantia de reembolso?",
-      a: "Sim! Oferecemos 7 dias de garantia incondicional. Se não ficar satisfeito, devolvemos 100% do valor."
+      question: "Por quanto tempo terei acesso ao curso?",
+      answer: "O acesso é vitalício! Compre uma vez e tenha acesso a todas as aulas e futuras atualizações para sempre.",
     },
     {
-      q: "O curso é atualizado?",
-      a: "Sim! Sempre que surgem novas ferramentas ou técnicas, atualizamos o conteúdo gratuitamente para todos os alunos."
-    }
+      question: "Existe garantia?",
+      answer: "Sim! Oferecemos 7 dias de garantia incondicional. Se por qualquer motivo você não gostar do curso, devolvemos 100% do seu dinheiro.",
+    },
   ];
+
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleFaq = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
     <section id="faq" className="bg-gray-50 py-16">
-      <div className="mx-auto max-w-4xl px-4 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-semibold mb-4">
             Perguntas Frequentes
           </h2>
+          <p className="text-lg text-black/70 max-w-2xl mx-auto">
+            Tire suas dúvidas e comece sua jornada na criação de vídeos com IA hoje mesmo.
+          </p>
         </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, i) => (
-            <div key={i} className="bg-white rounded-xl border border-black/10 overflow-hidden">
+        <div className="max-w-3xl mx-auto space-y-4">
+          {faqs.map((faq, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-sm border border-black/10"
+            >
               <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition"
+                className="flex justify-between items-center w-full p-6 text-left font-semibold text-lg"
+                onClick={() => toggleFaq(index)}
               >
-                <span className="font-medium">{faq.q}</span>
-                <span className={`transform transition ${openIndex === i ? 'rotate-180' : ''}`}>
-                  ↓
-                </span>
+                {faq.question}
+                <svg
+                  className={`w-6 h-6 transition-transform duration-300 ${
+                    openIndex === index ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
               </button>
-              {openIndex === i && (
-                <div className="px-6 pb-4 text-black/70">
-                  {faq.a}
+              {openIndex === index && (
+                <div className="px-6 pb-6 text-black/70">
+                  <p>{faq.answer}</p>
                 </div>
               )}
             </div>
@@ -781,36 +806,25 @@ function Faq() {
 function Author({ img }) {
   return (
     <section id="autor" className="bg-white py-16">
-      <div className="mx-auto max-w-4xl px-4 md:px-6">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <img
               src={img}
-              alt="Autor do curso"
-              className="w-full max-w-sm mx-auto rounded-2xl shadow-lg"
+              alt="Autor"
+              className="w-full max-w-sm mx-auto rounded-xl shadow-lg"
             />
           </div>
           <div>
-            <h2 className="text-3xl font-semibold mb-4">Sobre o instrutor</h2>
-            <p className="text-black/70 mb-6">
-              Creator com mais de 5 milhões de views mensais, especialista em IA generativa 
-              e estratégias de viralização. Desenvolveu o pipeline completo que ensina no curso 
-              através de anos de experimentação e otimização.
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+              Conheça o seu mentor
+            </h2>
+            <p className="text-lg text-black/70 mb-4">
+              Olá! Sou [Nome do Autor], especialista em inteligência artificial e criação de conteúdo viral. Já ajudei milhares de pessoas a transformarem suas ideias em vídeos que geram milhões de visualizações.
             </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                <span>5M+ views mensais no TikTok</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                <span>Especialista em IA generativa</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                <span>3+ anos criando conteúdo viral</span>
-              </div>
-            </div>
+            <p className="text-lg text-black/70">
+              Minha missão é descomplicar a IA e te mostrar como você pode usar essa tecnologia para criar vídeos incríveis, mesmo que você nunca tenha editado um vídeo na vida.
+            </p>
           </div>
         </div>
       </div>
@@ -822,22 +836,20 @@ function Author({ img }) {
 function FinalCTA({ cta }) {
   return (
     <section className="bg-gray-50 py-16">
-      <div className="mx-auto max-w-4xl px-4 md:px-6 text-center">
-        <h2 className="text-3xl md:text-4xl font-semibold mb-6">
-          Pronto para criar vídeos que viralizam?
-        </h2>
-        <p className="text-lg text-black/70 mb-8 max-w-2xl mx-auto">
-          Junte-se aos criadores que já estão dominando a criação de conteúdo com IA 
-          e transformando views em receita real.
-        </p>
-        <a
-          href={cta}
-          className="inline-flex items-center rounded-full bg-[#0A68FF] text-white px-8 py-4 text-xl font-semibold hover:brightness-110 transition-all duration-200 hover:scale-105"
-        >
-          🚀 Começar Agora - R$ 119,90
-        </a>
-        <div className="mt-4 text-sm text-black/60">
-          Garantia de 7 dias • Acesso vitalício • Atualizações gratuitas
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="rounded-xl border border-black/10 p-6 md:p-8 bg-gradient-to-br from-gray-50 to-white shadow-sm text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+            Comece a criar vídeos virais hoje mesmo!
+          </h2>
+          <p className="text-lg text-black/70 max-w-2xl mx-auto mb-8">
+            Não fique para trás. A inteligência artificial é o futuro da criação de conteúdo. Garanta sua vaga agora e domine essa tecnologia.
+          </p>
+          <a
+            href={cta}
+            className="inline-flex items-center justify-center rounded-full bg-[#0A68FF] text-white px-8 py-4 text-lg font-semibold hover:brightness-110 transition-all duration-200 hover:scale-105"
+          >
+            🚀 Quero Dominar a IA para Vídeos
+          </a>
         </div>
       </div>
     </section>
@@ -847,16 +859,15 @@ function FinalCTA({ cta }) {
 /* FOOTER */
 function Footer() {
   return (
-    <footer className="bg-white border-t border-black/10 py-8">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="text-center text-sm text-black/60">
-          <p>© 2025 Videos Craft IA. Todos os direitos reservados.</p>
-          <p className="mt-2">
-            Curso de criação de vídeos com inteligência artificial
-          </p>
-        </div>
+    <footer className="bg-black text-white py-8">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 text-center text-sm text-gray-400">
+        <p>&copy; {new Date().getFullYear()} VideosCraft IA. Todos os direitos reservados.</p>
+        <p className="mt-2">
+          <a href="#" className="hover:text-white">Termos de Uso</a> | <a href="#" className="hover:text-white">Política de Privacidade</a>
+        </p>
       </div>
     </footer>
   );
 }
+
 
