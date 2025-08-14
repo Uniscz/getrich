@@ -1,7 +1,11 @@
 {
   "buildCommand": "npm run build",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  "functions": {
+    "api/**/*.js": { "runtime": "vercel-node@3.0.0" }
+  }
 }
