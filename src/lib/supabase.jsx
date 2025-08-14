@@ -4,130 +4,66 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+  console.error('ENV faltando: VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY')
 }
 
-// Cliente Supabase principal
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    storageKey: 'vc-auth' // evita conflito com outras instâncias
+  }
+})
 
-// Export direto do cliente para uso como db
+// reexport opcional
 export const db = supabase
 
-// Helper functions para autenticação
 export const auth = {
-  // Sign in with email (magic link)
-  signInWithEmail: async (email) => {
-    const { data, error } = await supabase.auth.signInWithOtp({
+  signInWithEmail: async (email) =>
+    supabase.auth.signInWithOtp({
       email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/#/aluno`
-      }
-    })
-    return { data, error }
-  },
+      options: { emailRedirectTo: `${window.location.origin}/#/aluno` }
+    }),
 
-  // Sign in with email and password
-  signInWithPassword: async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    return { data, error }
-  },
+  signInWithPassword: (email, password) =>
+    supabase.auth.signInWithPassword({ email, password }),
 
+  signOut: () => supabase.auth.signOut(),
 
-  // Sign out
-  signOut: async () => {
-    const { error } = await supabase.auth.signOut()
-    return { error }
-  },
   getCurrentUser: async () => {
     const { data: { user }, error } = await supabase.auth.getUser()
     return { user, error }
   },
 
-  // Get user profile
-  getUserProfile: async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .single();
-    return { data, error };
-  },
+  getUserProfile: () =>
+    supabase.from('profiles').select('*').single(),
+
   getSession: async () => {
     const { data: { session }, error } = await supabase.auth.getSession()
     return { session, error }
   },
 
-  // Listen to auth changes
-  onAuthStateChange: (callback) => {
-    return supabase.auth.onAuthStateChange(callback)
-  }
+  onAuthStateChange: (cb) => supabase.auth.onAuthStateChange(cb)
 }
 
-// Helper functions para operações de banco
 export const database = {
-  // Check if user has active enrollment
-  checkEnrollment: async (userId) => {
-    const { data, error } = await supabase
-      .from('enrollments')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .single()
-    
-    return { data, error }
-  },
+  checkEnrollment: (userId) =>
+    supabase.from('enrollments').select('*')
+      .eq('user_id', userId).eq('status', 'active').single(),
 
-  // Create or update enrollment
-  upsertEnrollment: async (enrollment) => {
-    const { data, error } = await supabase
-      .from('enrollments')
-      .upsert(enrollment, { onConflict: 'user_id' })
-    
-    return { data, error }
-  },
+  upsertEnrollment: (enrollment) =>
+    supabase.from('enrollments').upsert(enrollment, { onConflict: 'user_id' }),
 
-  // Get all lessons
-  getLessons: async () => {
-    const { data, error } = await supabase
-      .from('lessons')
-      .select('*')
-      .order('order_num', { ascending: true })
-    
-    return { data, error }
-  },
+  getLessons: () =>
+    supabase.from('lessons').select('*').order('order_num', { ascending: true }),
 
-  // Add new lesson
-  addLesson: async (lesson) => {
-    const { data, error } = await supabase
-      .from('lessons')
-      .insert([lesson])
-    
-    return { data, error }
-  },
+  addLesson: (lesson) =>
+    supabase.from('lessons').insert([lesson]),
 
-  // Update lesson
-  updateLesson: async (id, updates) => {
-    const { data, error } = await supabase
-      .from('lessons')
-      .update(updates)
-      .eq('id', id)
-    
-    return { data, error }
-  },
+  updateLesson: (id, updates) =>
+    supabase.from('lessons').update(updates).eq('id', id),
 
-  // Delete lesson
-  deleteLesson: async (id) => {
-    const { data, error } = await supabase
-      .from('lessons')
-      .delete()
-      .eq('id', id)
-    
-    return { data, error }
-  }
+  deleteLesson: (id) =>
+    supabase.from('lessons').delete().eq('id', id)
 }
 
-// Export default do cliente principal
 export default supabase
-
