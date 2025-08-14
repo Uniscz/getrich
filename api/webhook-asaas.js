@@ -21,103 +21,95 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Validar token do Asaas
+    const token = req.headers['asaas-access-token'] || req.query.token;
+    if (token !== process.env.ASAAS_WEBHOOK_TOKEN) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     // Log da requisição para debug
     console.log('Webhook recebido:', JSON.stringify(req.body, null, 2));
 
     const { event, payment } = req.body;
 
-    // Verificar se é um evento de pagamento confirmado
-    if (event !== 'PAYMENT_CONFIRMED' && event !== 'PAYMENT_RECEIVED') {
-      console.log('Evento ignorado:', event);
-      return res.status(200).json({ message: 'Evento ignorado' });
-    }
-
-    // Verificar se o pagamento foi aprovado
-    if (payment.status !== 'CONFIRMED' && payment.status !== 'RECEIVED') {
-      console.log('Pagamento não confirmado:', payment.status);
-      return res.status(200).json({ message: 'Pagamento não confirmado' });
-    }
-
     // Extrair email do cliente
-    const customerEmail = payment.customer?.email;
+    const customerEmail = payment.customer?.email || payment.customerEmail;
     if (!customerEmail) {
       console.error('Email do cliente não encontrado');
       return res.status(400).json({ error: 'Email do cliente não encontrado' });
     }
 
-    console.log('Processando pagamento para:', customerEmail);
+    console.log('Processando evento:', event, 'para:', customerEmail);
 
-    // Buscar usuário no Supabase pelo email
-    const { data: users, error: userError } = await supabase.auth.admin.listUsers();
+    // Buscar ou criar usuário no Supabase pelo email
+    const { data: found, error: gErr } = await supabase.auth.admin.getUserByEmail(customerEmail);
+    let userId = found?.user?.id;
     
-    if (userError) {
-      console.error('Erro ao buscar usuários:', userError);
-      return res.status(500).json({ error: 'Erro ao buscar usuário' });
+    if (!userId) {
+      const created = await supabase.auth.admin.createUser({ 
+        email: customerEmail, 
+        email_confirm: true 
+      });
+      if (created.error) throw created.error;
+      userId = created.data.user.id;
+      console.log('Usuário criado:', userId);
+    } else {
+      console.log('Usuário encontrado:', userId);
     }
 
-    const user = users.users.find(u => u.email === customerEmail);
-    
-    if (!user) {
-      console.error('Usuário não encontrado:', customerEmail);
-      return res.status(404).json({ error: 'Usuário não encontrado' });
-    }
-
-    console.log('Usuário encontrado:', user.id);
-
-    // Verificar se já existe uma matrícula para este usuário
-    const { data: existingEnrollment, error: checkError } = await supabase
-      .from('enrollments')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Erro ao verificar matrícula:', checkError);
-      return res.status(500).json({ error: 'Erro ao verificar matrícula' });
-    }
-
-    if (existingEnrollment) {
-      // Atualizar matrícula existente
-      const { error: updateError } = await supabase
+    // Processar eventos de pagamento confirmado
+    if (event === 'PAYMENT_CONFIRMED' || event === 'PAYMENT_RECEIVED') {
+      // Ativar matrícula (upsert)
+      const { error: upsertError } = await supabase
         .from('enrollments')
-        .update({ 
+        .upsert({ 
+          user_id: userId, 
           status: 'active',
           updated_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id);
+        }, { 
+          onConflict: 'user_id' 
+        });
 
-      if (updateError) {
-        console.error('Erro ao atualizar matrícula:', updateError);
-        return res.status(500).json({ error: 'Erro ao atualizar matrícula' });
+      if (upsertError) {
+        console.error('Erro ao ativar matrícula:', upsertError);
+        return res.status(500).json({ error: 'Erro ao ativar matrícula' });
       }
 
-      console.log('Matrícula atualizada para ativa');
-    } else {
-      // Criar nova matrícula
-      const { error: insertError } = await supabase
-        .from('enrollments')
-        .insert([{
-          user_id: user.id,
-          status: 'active',
-          created_at: new Date().toISOString()
-        }]);
-
-      if (insertError) {
-        console.error('Erro ao criar matrícula:', insertError);
-        return res.status(500).json({ error: 'Erro ao criar matrícula' });
-      }
-
-      console.log('Nova matrícula criada');
+      console.log(`Matrícula ativada para ${customerEmail} (${userId})`);
+      return res.status(200).json({ 
+        message: 'Matrícula ativada com sucesso',
+        user_id: userId,
+        email: customerEmail
+      });
     }
 
-    // Log de sucesso
-    console.log(`Acesso liberado para ${customerEmail} (${user.id})`);
+    // Processar eventos de cancelamento/estorno
+    if (event === 'PAYMENT_REFUNDED' || event === 'PAYMENT_CANCELLED') {
+      // Cancelar matrícula
+      const { error: cancelError } = await supabase
+        .from('enrollments')
+        .update({ 
+          status: 'inactive',
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId);
 
-    return res.status(200).json({ 
-      message: 'Acesso liberado com sucesso',
-      user_id: user.id,
-      email: customerEmail
-    });
+      if (cancelError) {
+        console.error('Erro ao cancelar matrícula:', cancelError);
+        return res.status(500).json({ error: 'Erro ao cancelar matrícula' });
+      }
+
+      console.log(`Matrícula cancelada para ${customerEmail} (${userId})`);
+      return res.status(200).json({ 
+        message: 'Matrícula cancelada com sucesso',
+        user_id: userId,
+        email: customerEmail
+      });
+    }
+
+    // Outros eventos são ignorados
+    console.log('Evento ignorado:', event);
+    return res.status(200).json({ message: 'Evento ignorado' });
 
   } catch (error) {
     console.error('Erro no webhook:', error);

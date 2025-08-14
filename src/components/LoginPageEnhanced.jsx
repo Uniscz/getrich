@@ -14,7 +14,7 @@ export function LoginPageEnhanced() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState("info"); // info, success, error
-  const [activeTab, setActiveTab] = useState("magic-link");
+  const [activeTab, setActiveTab] = useState("password");
 
   // Link de checkout do Asaas
   const CHECKOUT_URL = "https://www.asaas.com/c/sf24e6hym93upjk6";
@@ -90,63 +90,15 @@ export function LoginPageEnhanced() {
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="magic-link" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Link Mágico
-                </TabsTrigger>
                 <TabsTrigger value="password" className="flex items-center gap-2">
                   <Lock className="w-4 h-4" />
                   Email e Senha
                 </TabsTrigger>
+                <TabsTrigger value="magic-link" className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Link Mágico
+                </TabsTrigger>
               </TabsList>
-
-              {/* Tab: Magic Link */}
-              <TabsContent value="magic-link" className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Insira seu email e receba um link para acessar o curso.
-                  </p>
-                  <p className="text-sm font-semibold text-purple-600">
-                    Valor: R$ 199,00 (pagamento único)
-                  </p>
-                </div>
-                
-                <form onSubmit={onMagicLinkSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-magic">Email</Label>
-                    <Input
-                      id="email-magic"
-                      type="email"
-                      placeholder="seuemail@exemplo.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-purple-600 hover:bg-purple-700" 
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Mail className="w-4 h-4 mr-2" />
-                        Enviar Link Mágico
-                      </>
-                    )}
-                  </Button>
-                </form>
-                
-                <p className="text-xs text-gray-500 text-center">
-                  Após clicar em enviar, abriremos o checkout para completar o pagamento.
-                </p>
-              </TabsContent>
 
               {/* Tab: Password */}
               <TabsContent value="password" className="space-y-4">
@@ -209,6 +161,54 @@ export function LoginPageEnhanced() {
                     Esqueceu a senha? Use o link mágico
                   </Button>
                 </div>
+              </TabsContent>
+
+              {/* Tab: Magic Link */}
+              <TabsContent value="magic-link" className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600">
+                    Insira seu email e receba um link para acessar o curso.
+                  </p>
+                  <p className="text-sm font-semibold text-purple-600">
+                    Valor: R$ 119,90 (pagamento único)
+                  </p>
+                </div>
+                
+                <form onSubmit={onMagicLinkSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email-magic">Email</Label>
+                    <Input
+                      id="email-magic"
+                      type="email"
+                      placeholder="seuemail@exemplo.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-purple-600 hover:bg-purple-700" 
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4 mr-2" />
+                        Enviar Link Mágico
+                      </>
+                    )}
+                  </Button>
+                </form>
+                
+                <p className="text-xs text-gray-500 text-center">
+                  Após clicar em enviar, abriremos o checkout para completar o pagamento.
+                </p>
               </TabsContent>
             </Tabs>
 

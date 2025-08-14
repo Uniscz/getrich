@@ -26,19 +26,34 @@ export const auth = {
     return { data, error }
   },
 
+  // Sign in with email and password
+  signInWithPassword: async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    return { data, error }
+  },
+
+
   // Sign out
   signOut: async () => {
     const { error } = await supabase.auth.signOut()
     return { error }
   },
-
-  // Get current user
   getCurrentUser: async () => {
     const { data: { user }, error } = await supabase.auth.getUser()
     return { user, error }
   },
 
-  // Get current session
+  // Get user profile
+  getUserProfile: async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .single();
+    return { data, error };
+  },
   getSession: async () => {
     const { data: { session }, error } = await supabase.auth.getSession()
     return { session, error }

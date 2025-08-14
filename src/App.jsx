@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { AuthProvider, useAuth } from './hooks/useAuth.jsx'
 import { db } from './lib/supabase.jsx'
 import LandingPremium from './LandingPremium.jsx'
-import { LoginPage } from './components/LoginPage.jsx'
+import { LoginPageEnhanced } from './components/LoginPageEnhanced.jsx'
 import { Dashboard } from './components/Dashboard.jsx'
 import { CheckoutPage } from './components/CheckoutPage.jsx'
 import { WelcomePage } from './components/WelcomePage.jsx'
@@ -70,14 +70,27 @@ function AppContent() {
 
   // If user is authenticated and has access, show dashboard
   if (user && hasAccess) {
-    return <Dashboard />
+    if (route === '#/aluno' || route === '#/admin') {
+      return <Dashboard />
+    }
+  }
+
+  // If user is authenticated but doesn't have access, handle accordingly
+  if (user && !hasAccess && route === '#/aluno') {
+    // Redirect to checkout or show payment pending message
+    window.location.hash = '#/checkout'
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white text-xl">Redirecionando para checkout...</div>
+      </div>
+    )
   }
 
   // Show appropriate page based on current state
   switch (route) {
     case '#/login':
       return (
-        <LoginPage
+        <LoginPageEnhanced
           onSignIn={handleSignIn}
         />
       )
