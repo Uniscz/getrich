@@ -1,18 +1,37 @@
 // Webhook do Asaas para liberação automática de acesso
 // Este arquivo deve ser deployado como uma função serverless no Vercel
 
-import { createClient } from '@supabase/supabase-js';
+// Configurações do KV
+const KV_REST_API_URL = process.env.KV_REST_API_URL;
+const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
 
-// Configurações do Supabase (variáveis server-only)
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('Missing Supabase environment variables');
+if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
+  console.error('Missing KV environment variables');
 }
 
-// Cliente Supabase com permissões de admin
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Função para fazer requisições ao KV
+async function kvRequest(method, key, value = null) {
+  const url = `${KV_REST_API_URL}/${method}/${key}`;
+  const options = {
+    headers: {
+      'Authorization': `Bearer ${KV_REST_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+  };
+
+  if (value !== null) {
+    options.method = 'POST';
+    options.body = JSON.stringify(value);
+  }
+
+  const response = await fetch(url, options);
+  
+  if (!response.ok) {
+    throw new Error(`KV request failed: ${response.statusText}`);
+  }
+
+  return response.json();
+}
 
 export default async function handler(req, res) {
   // Permitir apenas POST
@@ -31,79 +50,54 @@ export default async function handler(req, res) {
     console.log('Webhook recebido:', JSON.stringify(req.body, null, 2));
 
     const { event, payment } = req.body;
+    const paymentId = payment.id;
 
-    // Extrair email do cliente
-    const customerEmail = payment.customer?.email || payment.customerEmail;
-    if (!customerEmail) {
-      console.error('Email do cliente não encontrado');
-      return res.status(400).json({ error: 'Email do cliente não encontrado' });
+    if (!paymentId) {
+      console.error('Payment ID não encontrado');
+      return res.status(400).json({ error: 'Payment ID não encontrado' });
     }
 
-    console.log('Processando evento:', event, 'para:', customerEmail);
-
-    // Buscar ou criar usuário no Supabase pelo email
-    const { data: found, error: gErr } = await supabase.auth.admin.getUserByEmail(customerEmail);
-    let userId = found?.user?.id;
-    
-    if (!userId) {
-      const created = await supabase.auth.admin.createUser({ 
-        email: customerEmail, 
-        email_confirm: true 
-      });
-      if (created.error) throw created.error;
-      userId = created.data.user.id;
-      console.log('Usuário criado:', userId);
-    } else {
-      console.log('Usuário encontrado:', userId);
-    }
+    console.log('Processando evento:', event, 'para payment ID:', paymentId);
 
     // Processar eventos de pagamento confirmado
     if (event === 'PAYMENT_CONFIRMED' || event === 'PAYMENT_RECEIVED') {
-      // Ativar matrícula (upsert)
-      const { error: upsertError } = await supabase
-        .from('enrollments')
-        .upsert({ 
-          user_id: userId, 
-          status: 'active',
-          updated_at: new Date().toISOString()
-        }, { 
-          onConflict: 'user_id' 
-        });
+      // Salvar no KV que o pagamento foi confirmado
+      const paymentData = {
+        status: 'confirmed',
+        paymentId: paymentId,
+        confirmedAt: new Date().toISOString(),
+        customerEmail: payment.customer?.email || payment.customerEmail,
+        value: payment.value,
+        description: payment.description
+      };
 
-      if (upsertError) {
-        console.error('Erro ao ativar matrícula:', upsertError);
-        return res.status(500).json({ error: 'Erro ao ativar matrícula' });
-      }
+      await kvRequest('set', `payment:${paymentId}`, JSON.stringify(paymentData));
 
-      console.log(`Matrícula ativada para ${customerEmail} (${userId})`);
+      console.log(`Pagamento confirmado para ID: ${paymentId}`);
       return res.status(200).json({ 
-        message: 'Matrícula ativada com sucesso',
-        user_id: userId,
-        email: customerEmail
+        message: 'Pagamento confirmado e salvo no KV',
+        payment_id: paymentId
       });
     }
 
     // Processar eventos de cancelamento/estorno
     if (event === 'PAYMENT_REFUNDED' || event === 'PAYMENT_CANCELLED') {
-      // Cancelar matrícula
-      const { error: cancelError } = await supabase
-        .from('enrollments')
-        .update({ 
-          status: 'inactive',
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', userId);
+      // Atualizar status no KV
+      const paymentData = {
+        status: event === 'PAYMENT_REFUNDED' ? 'refunded' : 'cancelled',
+        paymentId: paymentId,
+        updatedAt: new Date().toISOString(),
+        customerEmail: payment.customer?.email || payment.customerEmail,
+        value: payment.value,
+        description: payment.description
+      };
 
-      if (cancelError) {
-        console.error('Erro ao cancelar matrícula:', cancelError);
-        return res.status(500).json({ error: 'Erro ao cancelar matrícula' });
-      }
+      await kvRequest('set', `payment:${paymentId}`, JSON.stringify(paymentData));
 
-      console.log(`Matrícula cancelada para ${customerEmail} (${userId})`);
+      console.log(`Pagamento ${event === 'PAYMENT_REFUNDED' ? 'estornado' : 'cancelado'} para ID: ${paymentId}`);
       return res.status(200).json({ 
-        message: 'Matrícula cancelada com sucesso',
-        user_id: userId,
-        email: customerEmail
+        message: `Pagamento ${event === 'PAYMENT_REFUNDED' ? 'estornado' : 'cancelado'}`,
+        payment_id: paymentId
       });
     }
 
@@ -125,4 +119,3 @@ export const config = {
     },
   },
 }
-

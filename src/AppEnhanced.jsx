@@ -11,6 +11,7 @@ import { AdminPanelEnhanced } from './components/AdminPanelEnhanced.jsx'
 import { StudentPortal } from './components/StudentPortal.jsx'
 import { ProtectedRoute } from './components/ProtectedRoute.jsx'
 import { NavbarEnhanced } from './components/NavbarEnhanced.jsx'
+import { ObrigadoPage } from './components/ObrigadoPage.jsx'
 import './App.css'
 
 // --- PATCH: handle #/nova-senha route ---
@@ -76,6 +77,9 @@ function AppContent() {
     
     case '#/checkout':
       return <WelcomePage />
+    
+    case '#/obrigado':
+      return <ObrigadoPage />
     
     case '#/aluno':
     case '#/student':

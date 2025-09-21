@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 
 /** Videos Craft IA — Landing Premium com melhorias de conversão */
 export default function LandingPremium() {
-  const CTA = "#/checkout";
+  const CTA = "https://www.asaas.com/c/sf24e6hym93upjk6";
   const HERO_VIDEO =
     "https://vantwwznsmrmmnewrzia.supabase.co/storage/v1/object/public/videos/video%20(24).mp4";
   const AUTHOR_IMG =
