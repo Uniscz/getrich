@@ -110,21 +110,10 @@ function AppContent() {
     
     case '#/':
     default:
-      // Se o usuário está logado e tem acesso, redirecionar para área apropriada
-      if (user && profile && hasAccess) {
-        if (profile.role === 'admin') {
-          window.location.hash = '#/admin'
-          return null
-        } else {
-          window.location.hash = '#/aluno'
-          return null
-        }
-      }
-      
-      // Mostrar landing page com navbar aprimorada
+      // Mostrar landing page simples para venda
       return (
         <div className="min-h-screen bg-white text-[#0A0A0A] selection:bg-[#0A68FF]/20">
-          <NavbarEnhanced cta="#/checkout" />
+          <NavbarEnhanced cta="https://www.asaas.com/c/sf24e6hym93upjk6" />
           <div className="pt-16">
             <LandingPremium />
           </div>
