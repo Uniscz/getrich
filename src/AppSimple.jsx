@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import LandingPremium from './LandingPremium.jsx'
-import { ObrigadoPage } from './components/ObrigadoPage.jsx'
+import { ObrigadoPageSimple } from './components/ObrigadoPageSimple.jsx'
 import './App.css'
 
 function normalize(hash) {
@@ -20,7 +20,7 @@ function AppSimple() {
   // Roteamento baseado no hash
   switch (route) {
     case '#/obrigado':
-      return <ObrigadoPage />
+      return <ObrigadoPageSimple />
     
     case '#/':
     default:
