@@ -1,4 +1,4 @@
-_content_
+
 
 
 // API para buscar pagamentos por CPF/CNPJ ou e-mail
