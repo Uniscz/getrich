@@ -44,10 +44,13 @@ export default async function handler(req, res) {
     }
 
     // Buscar os dados de cada pagamento
-    const payments = await redisClient.mget(paymentKeys);
+    let payments = await redisClient.mget(paymentKeys);
+    if (!Array.isArray(payments)) {
+      payments = [];
+    }
 
     // Filtrar os pagamentos que correspondem à consulta
-    const matchingPayments = (payments || [])
+    const matchingPayments = payments
       .filter(paymentStr => paymentStr !== null)
       .map(paymentStr => JSON.parse(paymentStr))
       .filter(paymentData => 
