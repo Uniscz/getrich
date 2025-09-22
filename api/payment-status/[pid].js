@@ -2,38 +2,22 @@
 // Este arquivo deve ser deployado como uma função serverless no Vercel
 
 import crypto from 'crypto';
+import { createClient } from 'redis';
 
 // Configurações
-const KV_REST_API_URL = process.env.KV_REST_API_URL;
-const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
 const DOWNLOAD_SECRET = process.env.DOWNLOAD_SECRET || 'your-secret-key';
 
-if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
-  console.error('Missing KV environment variables');
-}
+// Configuração do Redis
+const redis = createClient({
+  url: process.env.REDIS_URL
+});
 
-// Função para fazer requisições ao KV
-async function kvRequest(method, key, value = null) {
-  const url = `${KV_REST_API_URL}/${method}/${key}`;
-  const options = {
-    headers: {
-      'Authorization': `Bearer ${KV_REST_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-  };
-
-  if (value !== null) {
-    options.method = 'POST';
-    options.body = JSON.stringify(value);
+// Conectar ao Redis
+async function connectRedis() {
+  if (!redis.isOpen) {
+    await redis.connect();
   }
-
-  const response = await fetch(url, options);
-  
-  if (!response.ok) {
-    throw new Error(`KV request failed: ${response.statusText}`);
-  }
-
-  return response.json();
+  return redis;
 }
 
 // Função para gerar token assinado
@@ -70,10 +54,13 @@ export default async function handler(req, res) {
 
     console.log('Verificando status do pagamento:', pid);
 
-    // Buscar dados do pagamento no KV
-    const kvData = await kvRequest('get', `payment:${pid}`);
+    // Conectar ao Redis
+    const redisClient = await connectRedis();
+
+    // Buscar dados do pagamento no Redis
+    const paymentDataStr = await redisClient.get(`payment:${pid}`);
     
-    if (!kvData.result) {
+    if (!paymentDataStr) {
       // Pagamento não encontrado - pode estar pendente
       return res.status(200).json({
         status: 'pending',
@@ -81,7 +68,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const paymentData = JSON.parse(kvData.result);
+    const paymentData = JSON.parse(paymentDataStr);
     
     if (paymentData.status === 'confirmed') {
       // Gerar link de download com token assinado

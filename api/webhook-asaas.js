@@ -1,36 +1,19 @@
 // Webhook do Asaas para liberação automática de acesso
 // Este arquivo deve ser deployado como uma função serverless no Vercel
 
-// Configurações do KV
-const KV_REST_API_URL = process.env.KV_REST_API_URL;
-const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+import { createClient } from 'redis';
 
-if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
-  console.error('Missing KV environment variables');
-}
+// Configuração do Redis
+const redis = createClient({
+  url: process.env.REDIS_URL
+});
 
-// Função para fazer requisições ao KV
-async function kvRequest(method, key, value = null) {
-  const url = `${KV_REST_API_URL}/${method}/${key}`;
-  const options = {
-    headers: {
-      'Authorization': `Bearer ${KV_REST_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-  };
-
-  if (value !== null) {
-    options.method = 'POST';
-    options.body = JSON.stringify(value);
+// Conectar ao Redis
+async function connectRedis() {
+  if (!redis.isOpen) {
+    await redis.connect();
   }
-
-  const response = await fetch(url, options);
-  
-  if (!response.ok) {
-    throw new Error(`KV request failed: ${response.statusText}`);
-  }
-
-  return response.json();
+  return redis;
 }
 
 export default async function handler(req, res) {
@@ -59,9 +42,12 @@ export default async function handler(req, res) {
 
     console.log('Processando evento:', event, 'para payment ID:', paymentId);
 
+    // Conectar ao Redis
+    const redisClient = await connectRedis();
+
     // Processar eventos de pagamento confirmado
     if (event === 'PAYMENT_CONFIRMED' || event === 'PAYMENT_RECEIVED') {
-      // Salvar no KV que o pagamento foi confirmado
+      // Salvar no Redis que o pagamento foi confirmado
       const paymentData = {
         status: 'confirmed',
         paymentId: paymentId,
@@ -71,18 +57,20 @@ export default async function handler(req, res) {
         description: payment.description
       };
 
-      await kvRequest('set', `payment:${paymentId}`, JSON.stringify(paymentData));
+      await redisClient.set(`payment:${paymentId}`, JSON.stringify(paymentData), {
+        EX: 60 * 60 * 48 // Expira em 48 horas
+      });
 
       console.log(`Pagamento confirmado para ID: ${paymentId}`);
       return res.status(200).json({ 
-        message: 'Pagamento confirmado e salvo no KV',
+        message: 'Pagamento confirmado e salvo no Redis',
         payment_id: paymentId
       });
     }
 
     // Processar eventos de cancelamento/estorno
     if (event === 'PAYMENT_REFUNDED' || event === 'PAYMENT_CANCELLED') {
-      // Atualizar status no KV
+      // Atualizar status no Redis
       const paymentData = {
         status: event === 'PAYMENT_REFUNDED' ? 'refunded' : 'cancelled',
         paymentId: paymentId,
@@ -92,7 +80,9 @@ export default async function handler(req, res) {
         description: payment.description
       };
 
-      await kvRequest('set', `payment:${paymentId}`, JSON.stringify(paymentData));
+      await redisClient.set(`payment:${paymentId}`, JSON.stringify(paymentData), {
+        EX: 60 * 60 * 48 // Expira em 48 horas
+      });
 
       console.log(`Pagamento ${event === 'PAYMENT_REFUNDED' ? 'estornado' : 'cancelado'} para ID: ${paymentId}`);
       return res.status(200).json({ 
