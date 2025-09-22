@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     }
 
     // Buscar os dados de cada pagamento
-    const payments = await redisClient.mGet(paymentKeys);
+    const payments = await redisClient.mget(paymentKeys);
 
     // Filtrar os pagamentos que correspondem à consulta
     const matchingPayments = payments
