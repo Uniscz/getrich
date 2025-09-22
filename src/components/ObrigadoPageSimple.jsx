@@ -14,8 +14,11 @@ export function ObrigadoPageSimple() {
     if (pid) {
       setPaymentId(pid);
       checkPaymentStatus(pid);
+    } else {
+      // Se não houver paymentId na URL, redireciona para a página de busca
+      window.location.hash = `#/meus-downloads`;
     }
-  }, []);
+  }, [paymentId]);
 
   const checkPaymentStatus = async (pid) => {
     try {

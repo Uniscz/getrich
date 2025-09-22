@@ -53,6 +53,7 @@ export default async function handler(req, res) {
         paymentId: paymentId,
         confirmedAt: new Date().toISOString(),
         customerEmail: payment.customer?.email || payment.customerEmail,
+        customerCpfCnpj: payment.customer?.cpfCnpj || payment.customerCpfCnpj,
         value: payment.value,
         description: payment.description
       };
@@ -76,6 +77,7 @@ export default async function handler(req, res) {
         paymentId: paymentId,
         updatedAt: new Date().toISOString(),
         customerEmail: payment.customer?.email || payment.customerEmail,
+        customerCpfCnpj: payment.customer?.cpfCnpj || payment.customerCpfCnpj,
         value: payment.value,
         description: payment.description
       };

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import LandingPremium from './LandingPremium.jsx'
 import { ObrigadoPageSimple } from './components/ObrigadoPageSimple.jsx'
 import { AsaasReturnDetector } from './components/AsaasReturnDetector.jsx'
+import MyDownloads from './pages/MyDownloads.jsx'
 import './App.css'
 
 function normalize(hash) {
@@ -31,20 +32,21 @@ function AppSimple() {
   console.log('Current route:', route); // Debug
   
   // Verificar se é rota obrigado (com ou sem parâmetros)
-  if (route.startsWith('#/obrigado')) {
-    return <ObrigadoPageSimple />
-  }
-  
-  switch (route) {
-    case '#/':
-    default:
-      // Mostrar landing page simples para venda
-      return (
-        <>
-          <LandingPremium />
-          <AsaasReturnDetector onPaymentDetected={handlePaymentDetected} />
-        </>
-      )
+  if (route.startsWith("#/obrigado")) {
+    return <ObrigadoPageSimple />;
+  } else if (route === "#/meus-downloads") {
+    return <MyDownloads />;
+  } else if (route === "#/") {
+    return (
+      <>
+        <LandingPremium />
+        <AsaasReturnDetector onPaymentDetected={handlePaymentDetected} />
+      </>
+    );
+  } else {
+    // Se a rota não for reconhecida, redireciona para a landing page principal
+    window.location.hash = "#/";
+    return null;
   }
 }
 
