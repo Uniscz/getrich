@@ -143,9 +143,10 @@ function Navbar({ cta }) {
           <a href="#autor" className="hover:opacity-70">Autor</a>
         </div>
         <a href={cta}
-                className="hidden md:inline-flex items-center rounded-full border border-[#0A0A0A] px-4 py-2 text-sm font-medium hover:bg-[#0A0A0A] hover:text-white transition"
+                className="inline-flex items-center rounded-full border border-[#0A0A0A] px-4 py-2 text-sm font-medium hover:bg-[#0A0A0A] hover:text-white transition"
         >
-          Garantir minha vaga
+          <span className="hidden md:inline">Comprar agora</span>
+          <span className="md:hidden">Comprar</span>
         </a>
       </div>
     </nav>
