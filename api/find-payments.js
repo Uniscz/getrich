@@ -47,7 +47,8 @@ export default async function handler(req, res) {
     const payments = await redisClient.mget(paymentKeys);
 
     // Filtrar os pagamentos que correspondem à consulta
-    const matchingPayments = payments
+    const matchingPayments = (payments || [])
+      .filter(paymentStr => paymentStr !== null)
       .map(paymentStr => JSON.parse(paymentStr))
       .filter(paymentData => 
         paymentData.customerEmail === query || paymentData.customerCpfCnpj === query
