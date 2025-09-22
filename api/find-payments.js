@@ -4,19 +4,18 @@
 // API para buscar pagamentos por CPF/CNPJ ou e-mail
 // Este arquivo deve ser deployado como uma função serverless no Vercel
 
-import { createClient } from 'redis';
+import redis from 'redis';
 
 // Configuração do Redis
-const redis = createClient({
-  url: process.env.REDIS_URL
-});
+const redisClient = redis.createClient(process.env.REDIS_URL);
 
-// Conectar ao Redis
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+
 async function connectRedis() {
-  if (!redis.isOpen) {
-    await redis.connect();
+  if (!redisClient.connected) {
+    await redisClient.connect();
   }
-  return redis;
+  return redisClient;
 }
 
 export default async function handler(req, res) {
