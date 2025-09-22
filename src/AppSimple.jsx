@@ -18,10 +18,14 @@ function AppSimple() {
   }, [])
 
   // Roteamento baseado no hash
+  console.log('Current route:', route); // Debug
+  
+  // Verificar se é rota obrigado (com ou sem parâmetros)
+  if (route.startsWith('#/obrigado')) {
+    return <ObrigadoPageSimple />
+  }
+  
   switch (route) {
-    case '#/obrigado':
-      return <ObrigadoPageSimple />
-    
     case '#/':
     default:
       // Mostrar landing page simples para venda
