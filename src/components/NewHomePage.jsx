@@ -375,7 +375,7 @@ const VideoModal = ({ showVideoModal, setShowVideoModal }) => {
         {/* Botão de fechar elegante e discreto */}
         <button
           onClick={closeModal}
-          className="absolute top-6 right-6 z-[9999] w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="absolute top-6 right-6 z-[10001] w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{ 
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             color: 'rgba(245, 245, 245, 0.8)'
