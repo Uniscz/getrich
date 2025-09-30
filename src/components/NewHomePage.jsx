@@ -1,23 +1,28 @@
 import React, { useRef, useEffect, useState } from 'react';
-import FullscreenVideoBackground from './FullscreenVideoBackground.jsx';
+import StaticBackground from './StaticBackground.jsx';
 
 const NewHomePage = () => {
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
   return (
-    <FullscreenVideoBackground>
+    <StaticBackground>
       <div className="min-h-screen text-white" style={{ backgroundColor: '#121212' }}>
         {/* Navbar */}
         <Navbar />
         
         {/* Hero Section */}
-        <HeroSection />
+        <HeroSection showVideoModal={showVideoModal} setShowVideoModal={setShowVideoModal} />
         
         {/* Proof Section */}
         <ProofSection />
         
         {/* Final CTA */}
         <FinalCTASection />
+        
+        {/* Modal do Showreel */}
+        <VideoModal showVideoModal={showVideoModal} setShowVideoModal={setShowVideoModal} />
       </div>
-    </FullscreenVideoBackground>
+    </StaticBackground>
   );
 };
 
@@ -44,13 +49,13 @@ const Navbar = () => {
   );
 };
 
-const HeroSection = () => {
+const HeroSection = ({ showVideoModal, setShowVideoModal }) => {
   return (
     <section className="min-h-screen flex items-center justify-center px-6 md:px-8 pt-24 pb-16">
       <div className="max-w-5xl mx-auto text-center">
         {/* Título Principal */}
         <h1 
-          className="text-6xl md:text-8xl leading-tight mb-12 text-shadow-lg"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl leading-tight mb-12 text-shadow-lg"
           style={{ 
             fontFamily: 'Montserrat, sans-serif', 
             fontWeight: 600,
@@ -67,11 +72,10 @@ const HeroSection = () => {
         
         {/* Subtítulo */}
         <p 
-          className="text-xl md:text-2xl mb-16 max-w-3xl mx-auto leading-relaxed"
+          className="text-base sm:text-lg md:text-xl lg:text-2xl mb-16 max-w-3xl mx-auto leading-relaxed px-4"
           style={{ 
             fontFamily: 'Lato, sans-serif',
             color: '#F5F5F5',
-            fontSize: '18px',
             lineHeight: '1.7',
             marginBottom: '4rem'
           }}
@@ -80,6 +84,34 @@ const HeroSection = () => {
           <br />
           Ela precisa de um <strong>momento inesquecível</strong>.
         </p>
+        
+        {/* Botão do Showreel */}
+        <div className="mb-12">
+          <button
+            onClick={() => setShowVideoModal(true)}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-lg text-lg font-bold transition-all duration-300 backdrop-blur-sm border-2 uppercase"
+            style={{
+              backgroundColor: 'rgba(255, 215, 0, 0.1)',
+              borderColor: '#FFD700',
+              color: '#FFD700',
+              fontFamily: 'Lato, sans-serif',
+              fontWeight: 700
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#FFD700';
+              e.target.style.color = '#121212';
+              e.target.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+              e.target.style.color = '#FFD700';
+              e.target.style.transform = 'scale(1)';
+            }}
+          >
+            <span>▶️</span>
+            ASSISTIR AO MEU SHOWREEL
+          </button>
+        </div>
         
         {/* CTA Principal */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -115,18 +147,17 @@ const ProofSection = () => {
           }}
         >
           <h2 
-            className="text-center mb-16"
+            className="text-center mb-16 text-2xl sm:text-3xl md:text-4xl lg:text-5xl px-4"
             style={{ 
               fontFamily: 'Montserrat, sans-serif', 
               fontWeight: 600,
-              fontSize: '3rem',
               color: '#F5F5F5'
             }}
           >
             Alguns Resultados
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
             <div className="text-center">
               {/* Ícone Line-art para Visualizações */}
               <div className="mb-6">
@@ -275,11 +306,10 @@ const FinalCTASection = () => {
     <section className="py-32 px-6 md:px-8">
       <div className="max-w-4xl mx-auto text-center">
         <h2 
-          className="mb-12"
+          className="mb-12 text-2xl sm:text-3xl md:text-4xl lg:text-6xl px-4"
           style={{ 
             fontFamily: 'Montserrat, sans-serif', 
             fontWeight: 600,
-            fontSize: '4rem',
             color: '#F5F5F5',
             lineHeight: '1.2'
           }}
@@ -316,3 +346,53 @@ const FinalCTASection = () => {
 };
 
 export default NewHomePage;
+
+const VideoModal = ({ showVideoModal, setShowVideoModal }) => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (showVideoModal && videoRef.current) {
+      videoRef.current.play();
+    }
+  }, [showVideoModal]);
+
+  const closeModal = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    setShowVideoModal(false);
+  };
+
+  if (!showVideoModal) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+      onClick={closeModal}
+    >
+      <div className="relative w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center p-4">
+        {/* Botão de fechar */}
+        <button
+          onClick={closeModal}
+          className="absolute top-4 right-4 z-60 text-white hover:text-yellow-400 transition-colors"
+          style={{ fontSize: '2rem' }}
+        >
+          ✕
+        </button>
+        
+        {/* Vídeo */}
+        <video
+          ref={videoRef}
+          className="w-full h-full object-contain rounded-lg"
+          controls
+          autoPlay
+          onClick={(e) => e.stopPropagation()}
+        >
+          <source src="/video.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeos HTML5.
+        </video>
+      </div>
+    </div>
+  );
+};

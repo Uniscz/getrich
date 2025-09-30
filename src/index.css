@@ -47,3 +47,45 @@ p {
 }
 
 
+
+/* Responsividade Mobile - Tipografia */
+@media (max-width: 767px) {
+  h1 {
+    font-size: 2.5rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  h2 {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Ajustes específicos para títulos com destaque amarelo */
+  .hero-title-mobile {
+    font-size: 2.25rem !important;
+  }
+  
+  /* Espaçamento mobile otimizado */
+  .mobile-spacing {
+    padding: 1.5rem !important;
+    margin-bottom: 2rem !important;
+  }
+  
+  /* Botões mobile com largura total */
+  .mobile-button {
+    width: 100% !important;
+    max-width: 300px !important;
+    padding: 1rem 2rem !important;
+  }
+}
+
+/* Melhorias para tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  h1 {
+    font-size: 3.5rem !important;
+  }
+  
+  h2 {
+    font-size: 2.5rem !important;
+  }
+}
