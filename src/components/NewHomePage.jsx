@@ -367,18 +367,20 @@ const VideoModal = ({ showVideoModal, setShowVideoModal }) => {
   if (!showVideoModal) return null;
 
   return (
-    <div 
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+<div 
+      className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+      style={{ zIndex: 9999 }}
       onClick={closeModal}
     >
       <div className="relative w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center p-4">
         {/* Botão de fechar elegante e discreto */}
         <button
           onClick={closeModal}
-          className="absolute top-6 right-6 z-[99999] w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="absolute top-6 right-6 w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{ 
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: 'rgba(245, 245, 245, 0.8)'
+            color: 'rgba(245, 245, 245, 0.8)',
+            zIndex: 10000
           }}
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.2)';
