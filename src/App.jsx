@@ -7,7 +7,9 @@ import { Dashboard } from './components/Dashboard.jsx'
 import { CheckoutPage } from './components/CheckoutPage.jsx'
 import { WelcomePage } from './components/WelcomePage.jsx'
 import { AdminPanel } from './components/AdminPanel.jsx'
+import FullscreenVideoBackground from './components/FullscreenVideoBackground.jsx'
 import './App.css'
+import './VideoBackground.css'
 
 function normalize(hash) {
   if (!hash || hash === '' || hash === '#' || hash === '#/') return '#/'
@@ -112,7 +114,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <FullscreenVideoBackground>
+        <AppContent />
+      </FullscreenVideoBackground>
     </AuthProvider>
   )
 }
