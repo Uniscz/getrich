@@ -49,7 +49,7 @@ const AboutPage = () => {
 
                 <div className="bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 rounded-xl p-6 border border-yellow-400/30">
                   <p className="text-xl font-bold text-center">
-                    Meu nome é <span className="text-yellow-400">[Seu Nome]</span> e eu sou um <span className="text-yellow-400">estrategista de conteúdo viral</span>.
+                    Meu nome é <span className="text-yellow-400">André</span> e eu sou um <span className="text-yellow-400">estrategista de conteúdo viral</span>.
                   </p>
                 </div>
               </div>
