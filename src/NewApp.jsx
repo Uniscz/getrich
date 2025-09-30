@@ -3,7 +3,6 @@ import NewHomePage from './components/NewHomePage.jsx';
 import ProjectsPage from './components/ProjectsPage.jsx';
 import AboutPage from './components/AboutPage.jsx';
 import ContactPage from './components/ContactPage.jsx';
-import WhatsAppButton from './components/WhatsAppButton.jsx';
 import './App.css';
 import './VideoBackground.css';
 
@@ -128,9 +127,6 @@ function NewApp() {
       <main>
         {renderPage()}
       </main>
-
-      {/* WhatsApp Button */}
-      <WhatsAppButton phoneNumber="5547997739046" />
 
       {/* Footer */}
       <footer className="bg-black/80 backdrop-blur-md border-t border-white/10 py-8">
