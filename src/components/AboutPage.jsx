@@ -1,4 +1,5 @@
 import React from 'react';
+import SocialLinks from './SocialLinks.jsx';
 
 const AboutPage = () => {
   return (
@@ -116,6 +117,16 @@ const AboutPage = () => {
                   </ul>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Social Links */}
+          <div className="mt-16 text-center">
+            <h2 className="text-2xl font-bold mb-6 text-yellow-400">
+              Me siga nas redes sociais
+            </h2>
+            <div className="flex justify-center">
+              <SocialLinks iconSize="w-8 h-8" />
             </div>
           </div>
 

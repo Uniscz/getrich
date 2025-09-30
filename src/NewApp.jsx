@@ -3,6 +3,7 @@ import NewHomePage from './components/NewHomePage.jsx';
 import ProjectsPage from './components/ProjectsPage.jsx';
 import AboutPage from './components/AboutPage.jsx';
 import ContactPage from './components/ContactPage.jsx';
+import WhatsAppButton from './components/WhatsAppButton.jsx';
 import './App.css';
 import './VideoBackground.css';
 
@@ -128,6 +129,9 @@ function NewApp() {
         {renderPage()}
       </main>
 
+      {/* WhatsApp Button */}
+      <WhatsAppButton phoneNumber="5547997739046" />
+
       {/* Footer */}
       <footer className="bg-black/80 backdrop-blur-md border-t border-white/10 py-8">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
@@ -137,13 +141,13 @@ function NewApp() {
             </div>
             
             <div className="flex items-center gap-6 text-sm text-white/70">
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="https://www.tiktok.com/@euinelegivel" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 TikTok
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="https://www.instagram.com/unisc/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 Instagram
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="https://www.youtube.com/@euinelegivel" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 YouTube
               </a>
             </div>

@@ -24,9 +24,28 @@ const ContactPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simular envio do formulário
+    // Preparar mensagem para WhatsApp
+    const whatsappMessage = `
+*Nova mensagem do site VideosCraftIA*
+
+*Nome:* ${formData.name}
+*Email:* ${formData.email}
+*Empresa:* ${formData.company || 'Não informado'}
+*Assunto:* ${formData.subject}
+
+*Mensagem:*
+${formData.message}
+    `.trim();
+    
+    // Enviar para WhatsApp
+    const phoneNumber = "5547997739046";
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
     setTimeout(() => {
       setIsSubmitting(false);
+      // Abrir WhatsApp
+      window.open(whatsappUrl, '_blank');
       setSubmitStatus('success');
       // Reset form
       setFormData({
@@ -36,7 +55,7 @@ const ContactPage = () => {
         subject: 'Orçamento de Projeto',
         message: ''
       });
-    }, 2000);
+    }, 1000);
   };
 
   return (
@@ -59,10 +78,10 @@ const ContactPage = () => {
           <div className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50">
             {submitStatus === 'success' ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-6">✅</div>
-                <h2 className="text-2xl font-bold mb-4 text-yellow-400">Mensagem Enviada!</h2>
+                <div className="text-6xl mb-6">📱</div>
+                <h2 className="text-2xl font-bold mb-4 text-yellow-400">Redirecionado para WhatsApp!</h2>
                 <p className="text-gray-300 mb-6">
-                  Obrigado pelo contato! Retornarei em breve com uma proposta personalizada.
+                  Sua mensagem foi formatada e enviada para o WhatsApp. Retornarei em breve com uma proposta personalizada!
                 </p>
                 <button
                   onClick={() => setSubmitStatus(null)}

@@ -99,7 +99,7 @@ const FullscreenVideoBackground = ({ children }) => {
       <video
         ref={videoRef}
         className="fixed top-0 left-0 w-full h-full object-cover z-[-2]"
-        style={{ objectPosition: 'center 30%' }}
+        style={{ objectPosition: 'center 60%' }}
         autoPlay
         loop
         playsInline
