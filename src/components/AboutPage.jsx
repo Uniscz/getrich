@@ -23,7 +23,7 @@ const AboutPage = () => {
                 <img
                   src="/author_image.png"
                   alt="Foto profissional"
-                  className="w-full h-full object-cover object-top"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
