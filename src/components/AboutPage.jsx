@@ -7,9 +7,9 @@ const AboutPage = () => {
       {/* Header */}
       <div className="pt-20 pb-12 px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            De <span className="text-red-400">"multi-lixo"</span> a <span className="text-yellow-400">mestre do algoritmo</span>
-          </h1>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              De <span className="text-red-400">"multi-nicho"</span> a <span className="text-yellow-400">mestre do algoritmo</span>
+            </h1>
         </div>
       </div>
 
@@ -21,9 +21,9 @@ const AboutPage = () => {
             <div className="md:col-span-1">
               <div className="aspect-square rounded-2xl overflow-hidden bg-gray-800 border border-gray-700">
                 <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
+                  src="/author_image.png"
                   alt="Foto profissional"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
             </div>
