@@ -54,7 +54,7 @@ function NewApp() {
             onClick={() => navigateTo('home')}
             className="font-bold text-xl text-white hover:text-yellow-400 transition-colors"
           >
-            GetRich
+            VideosCraftIA
           </button>
           
           <div className="hidden md:flex items-center gap-8 text-sm text-white/90">
@@ -133,7 +133,7 @@ function NewApp() {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-white/70 text-sm">
-              © 2025 GetRich. Criando eventos culturais na internet.
+              © 2025 VideosCraftIA. Criando eventos culturais na internet.
             </div>
             
             <div className="flex items-center gap-6 text-sm text-white/70">

@@ -9,27 +9,39 @@ const FullscreenVideoBackground = ({ children }) => {
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
-      // Configurar vídeo com som ativado
+      // Configurar vídeo com som ativado por padrão
       video.muted = false;
-      video.volume = 0.5; // Volume médio
+      video.volume = 0.4; // Volume moderado
+      setIsMuted(false);
       
       // Tentar reproduzir o vídeo com som
       const playVideo = async () => {
         try {
+          // Primeira tentativa: reproduzir com som
           await video.play();
           setIsPlaying(true);
+          console.log('Vídeo reproduzindo com som');
         } catch (error) {
-          console.log('Autoplay com som bloqueado pelo navegador:', error);
-          // Se falhar com som, tenta sem som primeiro
+          console.log('Autoplay com som bloqueado pelo navegador, tentando estratégia alternativa:', error);
+          
+          // Segunda tentativa: reproduzir mudo e depois ativar som
           video.muted = true;
           setIsMuted(true);
+          
           try {
             await video.play();
             setIsPlaying(true);
-            // Mostrar controles para o usuário ativar o som
-            setShowControls(true);
+            
+            // Tentar ativar som após um pequeno delay
+            setTimeout(() => {
+              video.muted = false;
+              video.volume = 0.4;
+              setIsMuted(false);
+              console.log('Som ativado após reprodução inicial');
+            }, 500);
+            
           } catch (mutedError) {
-            console.log('Erro ao reproduzir vídeo:', mutedError);
+            console.log('Erro ao reproduzir vídeo mesmo sem som:', mutedError);
             setIsPlaying(false);
           }
         }
@@ -37,22 +49,25 @@ const FullscreenVideoBackground = ({ children }) => {
 
       playVideo();
 
-      // Event listener para interação do usuário ativar som
+      // Event listener para garantir que o som seja ativado na primeira interação
       const handleUserInteraction = () => {
-        if (video.muted) {
+        if (video.muted || video.volume === 0) {
           video.muted = false;
-          video.volume = 0.5;
+          video.volume = 0.4;
           setIsMuted(false);
+          console.log('Som ativado por interação do usuário');
         }
       };
 
-      // Adicionar listeners apenas uma vez
+      // Adicionar listeners para primeira interação
       document.addEventListener('click', handleUserInteraction, { once: true });
       document.addEventListener('touchstart', handleUserInteraction, { once: true });
+      document.addEventListener('keydown', handleUserInteraction, { once: true });
 
       return () => {
         document.removeEventListener('click', handleUserInteraction);
         document.removeEventListener('touchstart', handleUserInteraction);
+        document.removeEventListener('keydown', handleUserInteraction);
       };
     }
   }, []);
@@ -84,6 +99,7 @@ const FullscreenVideoBackground = ({ children }) => {
       <video
         ref={videoRef}
         className="fixed top-0 left-0 w-full h-full object-cover z-[-2]"
+        style={{ objectPosition: 'center 30%' }}
         autoPlay
         loop
         playsInline
