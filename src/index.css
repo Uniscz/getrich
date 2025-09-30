@@ -1,14 +1,49 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Lato:wght@300;400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+  --bg-primary: #121212;
+  --text-primary: #F5F5F5;
+  --accent-color: #FFD700;
 }
 
 html, body, #root {
   height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Tipografia - Títulos com Montserrat */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Textos de corpo com Lato */
+body, p, span, div, a, button {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+/* Melhor legibilidade para textos */
+p {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  p {
+    font-size: 18px;
+  }
 }
 
 
