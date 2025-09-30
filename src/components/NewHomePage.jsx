@@ -372,13 +372,38 @@ const VideoModal = ({ showVideoModal, setShowVideoModal }) => {
       onClick={closeModal}
     >
       <div className="relative w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center p-4">
-        {/* Botão de fechar */}
+        {/* Botão de fechar elegante e discreto */}
         <button
           onClick={closeModal}
-          className="absolute top-4 right-4 z-60 text-white hover:text-yellow-400 transition-colors"
-          style={{ fontSize: '2rem' }}
+          className="absolute top-6 right-6 z-60 w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-110"
+          style={{ 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: 'rgba(245, 245, 245, 0.8)'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.2)';
+            e.target.style.borderColor = '#FFD700';
+            e.target.style.color = '#FFD700';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            e.target.style.color = 'rgba(245, 245, 245, 0.8)';
+          }}
         >
-          ✕
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
         
         {/* Vídeo */}

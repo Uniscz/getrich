@@ -203,14 +203,44 @@ ${formData.message}
           {/* Contact Info */}
           <div className="mt-12 grid md:grid-cols-2 gap-8">
             <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/30">
-              <h3 className="text-lg font-bold mb-3 text-yellow-400">⚡ Resposta Rápida</h3>
+              <div className="flex items-center gap-3 mb-3">
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="#FFD700" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                <h3 className="text-lg font-bold text-yellow-400">Resposta Rápida</h3>
+              </div>
               <p className="text-gray-300 text-sm">
                 Retorno em até 24 horas para projetos urgentes e oportunidades especiais.
               </p>
             </div>
 
             <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/30">
-              <h3 className="text-lg font-bold mb-3 text-yellow-400">🎯 Consultoria Gratuita</h3>
+              <div className="flex items-center gap-3 mb-3">
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="#FFD700" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M16 12l-4-4-4 4"/>
+                  <path d="M12 16V8"/>
+                </svg>
+                <h3 className="text-lg font-bold text-yellow-400">Consultoria Gratuita</h3>
+              </div>
               <p className="text-gray-300 text-sm">
                 Primeira conversa sempre gratuita para entender seu desafio e propor soluções.
               </p>
@@ -224,10 +254,35 @@ ${formData.message}
                 <strong className="text-yellow-400">+50 marcas</strong> já confiaram no meu trabalho para criar momentos virais
               </p>
               <div className="flex justify-center items-center gap-8 text-sm text-gray-400">
-                <span>🚀 Startups</span>
-                <span>🏢 Empresas</span>
-                <span>👤 Influenciadores</span>
-                <span>🎭 Artistas</span>
+                <div className="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                  </svg>
+                  <span>Startups</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 21h18"/>
+                    <path d="M5 21V7l8-4v18"/>
+                    <path d="M19 21V11l-6-4"/>
+                  </svg>
+                  <span>Empresas</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <span>Influenciadores</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  <span>Artistas</span>
+                </div>
               </div>
             </div>
           </div>
