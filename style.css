@@ -1,0 +1,445 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    color: #1d1d1f;
+    background-color: #ffffff;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: #ffffff;
+    padding: 40px 20px;
+    max-width: 900px;
+}
+
+.hero-headline {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+}
+
+.hero-subheadline {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-weight: 400;
+    margin-bottom: 40px;
+    opacity: 0.95;
+    letter-spacing: -0.01em;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 16px 40px;
+    background-color: #ffffff;
+    color: #1d1d1f;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.cta-button:active {
+    transform: translateY(0);
+}
+
+/* ===== MANIFESTO SECTION ===== */
+.manifesto {
+    background-color: #ffffff;
+    padding: 100px 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.manifesto-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.manifesto-text {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
+    color: #666666;
+    line-height: 1.8;
+    letter-spacing: -0.01em;
+}
+
+/* ===== PIX SECTION ===== */
+.pix-section {
+    background-color: #f5f5f7;
+    padding: 100px 20px;
+}
+
+.pix-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+    letter-spacing: -0.02em;
+}
+
+.pix-text {
+    font-size: 1.125rem;
+    color: #666666;
+    text-align: center;
+    margin-bottom: 60px;
+    letter-spacing: -0.01em;
+}
+
+.pix-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 60px;
+}
+
+/* QR Code */
+.qr-code-wrapper {
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.qr-code-wrapper:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+}
+
+.qr-code-wrapper:active {
+    transform: scale(0.98);
+}
+
+.qr-code-image {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+/* PIX Key */
+.pix-key-wrapper {
+    width: 100%;
+    max-width: 500px;
+}
+
+.pix-key-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #666666;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pix-key-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pix-key-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    border: 2px solid #e5e5e7;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #1d1d1f;
+    font-family: 'Monaco', 'Courier New', monospace;
+    letter-spacing: 0.02em;
+    transition: border-color 0.3s ease;
+}
+
+.pix-key-input:focus {
+    outline: none;
+    border-color: #0071e3;
+}
+
+.copy-button {
+    padding: 14px 28px;
+    background-color: #0071e3;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.copy-button:hover {
+    background-color: #0077ed;
+    box-shadow: 0 5px 15px rgba(0, 113, 227, 0.3);
+}
+
+.copy-button:active {
+    transform: scale(0.95);
+}
+
+/* Contact Link */
+.contact-link {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.contact-link a {
+    font-size: 0.95rem;
+    color: #0071e3;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.contact-link a:hover {
+    opacity: 0.8;
+    border-bottom-color: #0071e3;
+}
+
+/* ===== TOAST NOTIFICATION ===== */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(150px);
+    background-color: #1d1d1f;
+    color: #ffffff;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .hero-headline {
+        font-size: 2rem;
+    }
+
+    .hero-subheadline {
+        font-size: 1rem;
+    }
+
+    .cta-button {
+        padding: 14px 32px;
+        font-size: 0.95rem;
+    }
+
+    .manifesto {
+        padding: 60px 20px;
+    }
+
+    .manifesto-title {
+        font-size: 1.75rem;
+    }
+
+    .manifesto-text {
+        font-size: 1rem;
+    }
+
+    .pix-section {
+        padding: 60px 20px;
+    }
+
+    .pix-title {
+        font-size: 1.75rem;
+    }
+
+    .pix-text {
+        font-size: 1rem;
+        margin-bottom: 40px;
+    }
+
+    .pix-container {
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .qr-code-image {
+        max-width: 240px;
+    }
+
+    .pix-key-container {
+        flex-direction: column;
+    }
+
+    .pix-key-input {
+        min-width: 100%;
+    }
+
+    .copy-button {
+        width: 100%;
+    }
+
+    .toast {
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        transform: translateY(150px);
+    }
+
+    .toast.show {
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-headline {
+        font-size: 1.5rem;
+    }
+
+    .hero-subheadline {
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+
+    .cta-button {
+        padding: 12px 28px;
+        font-size: 0.9rem;
+    }
+
+    .manifesto {
+        padding: 50px 16px;
+    }
+
+    .manifesto-title {
+        font-size: 1.5rem;
+    }
+
+    .manifesto-text {
+        font-size: 0.95rem;
+    }
+
+    .pix-section {
+        padding: 50px 16px;
+    }
+
+    .pix-title {
+        font-size: 1.5rem;
+    }
+
+    .pix-text {
+        font-size: 0.95rem;
+    }
+
+    .qr-code-image {
+        max-width: 200px;
+        padding: 16px;
+    }
+
+    .pix-key-label {
+        font-size: 0.8rem;
+    }
+
+    .pix-key-input {
+        font-size: 0.85rem;
+        padding: 12px 14px;
+    }
+
+    .copy-button {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.manifesto,
+.pix-section {
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* ===== PERFORMANCE & ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

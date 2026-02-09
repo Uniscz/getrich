@@ -1,21 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Financiamento independente para acelerar a próxima produção." />
-    <meta name="theme-color" content="#000000" />
-    <meta property="og:title" content="Independência Criativa — Próxima Obra" />
-    <meta property="og:description" content="Financiamento independente para acelerar a próxima produção." />
-    <meta property="og:type" content="website" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Independência Criativa — Próxima Obra</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <meta name="description" content="Financiamento independente para acelerar a próxima produção.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Hero Section com Vídeo de Fundo -->
+    <section class="hero">
+        <video autoplay muted loop playsinline class="hero-video" poster="poster.jpg">
+            <source src="hero-video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-headline">Enquanto cancelam histórias, eu continuo criando.</h1>
+            <p class="hero-subheadline">Independência criativa. Sem estúdio. Sem permissão.</p>
+            <a href="#pix" class="cta-button">Financiar a Próxima Obra</a>
+        </div>
+    </section>
+
+    <!-- Seção Manifesto -->
+    <section class="manifesto">
+        <div class="container">
+            <h2 class="manifesto-title">Sem emissora. Sem investidores. Sem roteiro imposto.</h2>
+            <p class="manifesto-text">Cada episódio é produzido de forma independente. Este projeto cresce com quem acredita.</p>
+        </div>
+    </section>
+
+    <!-- Seção PIX -->
+    <section class="pix-section" id="pix">
+        <div class="container">
+            <h2 class="pix-title">Contribuir via PIX</h2>
+            <p class="pix-text">Contribuição voluntária para acelerar a próxima produção.</p>
+            
+            <div class="pix-container">
+                <div class="qr-code-wrapper" id="qr-code" title="Clique para copiar a chave PIX">
+                    <img src="qrcode.png" alt="QR Code PIX" class="qr-code-image">
+                </div>
+                
+                <div class="pix-key-wrapper">
+                    <p class="pix-key-label">Chave PIX (Aleatória)</p>
+                    <div class="pix-key-container">
+                        <input type="text" id="pix-key" class="pix-key-input" value="8e027698-75aa-4f73-9809-f9b576bf0e44" readonly>
+                        <button id="copy-button" class="copy-button">Copiar chave</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-link">
+                <a href="mailto:contato@exemplo.com">Parcerias e contato</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast de Feedback -->
+    <div id="toast" class="toast">Chave copiada!</div>
+
+    <script src="script.js"></script>
+</body>
 </html>
